@@ -14,7 +14,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 
   this.enabled = true;
 
-  this.deviceOrientation = {};
+  this.deviceOrientation = null;
   this.screenOrientation = 0;
 
   this.alphaOffset = 0; // radians
@@ -83,7 +83,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 
     var device = scope.deviceOrientation;
 
-    if ( device ) {
+    if ( !!device ) {
 
       var alpha = device.alpha ? THREE.Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
 

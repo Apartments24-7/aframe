@@ -246,19 +246,17 @@ module.exports.Component = registerComponent('look-controls', {
     var magicWindowAbsoluteEuler = this.magicWindowAbsoluteEuler;
     var magicWindowDeltaEuler = this.magicWindowDeltaEuler;
     // Calculate magic window HMD quaternion.
-    if (magicWindowControls && magicWindowControls.enabled) {
-      if (!!magicWindowControls.deviceOrientation && (!!magicWindowControls.deviceOrientation.alpha || !!magicWindowControls.deviceOrientation.beta || !!magicWindowControls.deviceOrientation.gamma)) {
-        magicWindowControls.update();
-        magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, 'YXZ');
-        if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
-          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-        }
-        if (this.previousMagicWindowYaw) {
-          magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
-          magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
-          magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
-          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-        }
+    if (magicWindowControls && magicWindowControls.enabled && magicWindowControls.hasMotionData) {
+      magicWindowControls.update();
+      magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, 'YXZ');
+      if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
+        this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
+      }
+      if (this.previousMagicWindowYaw) {
+        magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
+        magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
+        magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
+        this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
       }
     }
   },

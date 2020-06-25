@@ -17,11 +17,22 @@ THREE.DeviceOrientationControls = function ( object ) {
   this.deviceOrientation = null;
   this.screenOrientation = 0;
 
+  this.hasMotionData = false;
   this.alphaOffset = 0; // radians
 
   var onDeviceOrientationChangeEvent = function ( event ) {
 
     scope.deviceOrientation = event;
+
+    if (event.alpha || event.beta || event.gamma) {
+
+        scope.hasMotionData = true;
+
+    } else {
+
+        scope.hasMotionData = false;
+
+    }
 
   };
 
@@ -83,7 +94,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 
     var device = scope.deviceOrientation;
 
-    if ( !!device ) {
+    if ( device ) {
 
       var alpha = device.alpha ? THREE.Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
 

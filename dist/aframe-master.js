@@ -70283,19 +70283,17 @@ module.exports.Component = registerComponent('look-controls', {
     var magicWindowAbsoluteEuler = this.magicWindowAbsoluteEuler;
     var magicWindowDeltaEuler = this.magicWindowDeltaEuler;
     // Calculate magic window HMD quaternion.
-    if (magicWindowControls && magicWindowControls.enabled) {
-      if (!!magicWindowControls.deviceOrientation && (!!magicWindowControls.deviceOrientation.alpha || !!magicWindowControls.deviceOrientation.beta || !!magicWindowControls.deviceOrientation.gamma)) {
-        magicWindowControls.update();
-        magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, 'YXZ');
-        if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
-          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-        }
-        if (this.previousMagicWindowYaw) {
-          magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
-          magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
-          magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
-          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-        }
+    if (magicWindowControls && magicWindowControls.enabled && magicWindowControls.hasMotionData) {
+      magicWindowControls.update();
+      magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, 'YXZ');
+      if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
+        this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
+      }
+      if (this.previousMagicWindowYaw) {
+        magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
+        magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
+        magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
+        this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
       }
     }
   },
@@ -81802,7 +81800,7 @@ _dereq_('./core/a-mixin');
 _dereq_('./extras/components/');
 _dereq_('./extras/primitives/');
 
-console.log('A-Frame Version: 1.0.4 (Date 2020-06-24, Commit #7a47753a)');
+console.log('A-Frame Version: 1.0.4 (Date 2020-06-25, Commit #a7fcd334)');
 console.log('THREE Version (https://github.com/supermedium/three.js):',
             pkg.dependencies['super-three']);
 console.log('WebVR Polyfill Version:', pkg.dependencies['webvr-polyfill']);
@@ -85383,11 +85381,22 @@ THREE.DeviceOrientationControls = function ( object ) {
   this.deviceOrientation = null;
   this.screenOrientation = 0;
 
+  this.hasMotionData = false;
   this.alphaOffset = 0; // radians
 
   var onDeviceOrientationChangeEvent = function ( event ) {
 
     scope.deviceOrientation = event;
+
+    if (event.alpha || event.beta || event.gamma) {
+
+        scope.hasMotionData = true;
+
+    } else {
+
+        scope.hasMotionData = false;
+
+    }
 
   };
 
@@ -85449,7 +85458,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 
     var device = scope.deviceOrientation;
 
-    if ( !!device ) {
+    if ( device ) {
 
       var alpha = device.alpha ? THREE.Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
 

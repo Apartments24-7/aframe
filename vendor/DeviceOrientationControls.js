@@ -14,14 +14,25 @@ THREE.DeviceOrientationControls = function ( object ) {
 
   this.enabled = true;
 
-  this.deviceOrientation = {};
+  this.deviceOrientation = null;
   this.screenOrientation = 0;
 
+  this.hasMotionData = false;
   this.alphaOffset = 0; // radians
 
   var onDeviceOrientationChangeEvent = function ( event ) {
 
     scope.deviceOrientation = event;
+
+    if (event.alpha || event.beta || event.gamma) {
+
+        scope.hasMotionData = true;
+
+    } else {
+
+        scope.hasMotionData = false;
+
+    }
 
   };
 

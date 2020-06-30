@@ -242,11 +242,12 @@ module.exports.Component = registerComponent('look-controls', {
   })(),
 
   updateMagicWindowOrientation: function () {
+    var magicWindowControls = this.magicWindowControls;
     var magicWindowAbsoluteEuler = this.magicWindowAbsoluteEuler;
     var magicWindowDeltaEuler = this.magicWindowDeltaEuler;
     // Calculate magic window HMD quaternion.
-    if (this.magicWindowControls && this.magicWindowControls.enabled) {
-      this.magicWindowControls.update();
+    if (magicWindowControls && magicWindowControls.enabled && magicWindowControls.hasMotionData) {
+      magicWindowControls.update();
       magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, 'YXZ');
       if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
         this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
